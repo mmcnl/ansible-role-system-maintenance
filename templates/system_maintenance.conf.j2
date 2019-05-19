@@ -1,0 +1,9 @@
+# -*- mode: nginx -*-
+# {{ ansible_managed }}
+
+error_page 503 @maintenance;
+location @maintenance {
+    root /etc/nginx/global/;
+    rewrite ^(.*)$ /system_maintenance.html break;
+    internal;
+}

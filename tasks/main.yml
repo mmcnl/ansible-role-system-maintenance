@@ -1,0 +1,9 @@
+---
+- import_tasks: setup.yml
+  when: not enable_maintenance_mode and not disable_maintenance_mode
+
+- import_tasks: on.yml
+  when: enable_maintenance_mode
+
+- import_tasks: off.yml
+  when: disable_maintenance_mode

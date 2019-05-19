@@ -1,0 +1,32 @@
+---
+- name: temporarily stop monitoring services
+  systemd:
+    name: monit
+    enabled: yes
+    state: stopped
+
+- name: get current time in RFC2616 format
+  shell: |
+    curdate=`date -d'+{{ (maintenance_rounding_min|int + maintenance_min|int) }} minutes' '+%s'`
+    rounded=$(echo "$curdate - ($curdate % ({{ maintenance_rounding_min }} * 60))" | bc)
+    TZ=America/New_York date -d"@$rounded" '+%b %d at %l:%M%P %Z'
+  register: maintenance_end_time
+
+- replace:
+    path: "{{ maintenance_html_path }}"
+    regexp: '(.*expectedCompletion.>).*?(<.*)?$'
+    replace: '\1by {{ maintenance_end_time.stdout }}\2'
+
+# https://github.com/systemd/systemd/issues/10529#issuecomment-433319399
+- name: reset systemd failure counts
+  command: systemctl reset-failed
+
+- name: update conf file to turn maintenance mode on
+  lineinfile:
+    path: "{{ maintenance_nginx_conf }}"
+    line: return 503;
+    insertbefore: error_page
+    state: present
+    mode: 0644
+  notify: restart nginx
+

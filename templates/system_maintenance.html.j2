@@ -1,0 +1,30 @@
+<!-- -*- mode: web -*- -->
+<!doctype html>
+<html>
+  <head>
+    <title>System Maintenance</title>
+    <style>
+     body { text-align: center; padding: 150px; }
+     h1 { font-size: 50px; }
+     body { font: 20px Helvetica, sans-serif; color: #333; }
+     article { display: block; text-align: left; width: 650px; margin: 0 auto; }
+     a { text-decoration: none; }
+     a:hover { color: #333; text-decoration: none; }
+    </style>
+  </head>
+
+  <body>
+    <h1>System Maintenance</h1>
+    <div>
+      <p>{{ maintenance_site_name }} is temporarily offline while we make some improvements.</p>
+      <p style="font-size: 120%; font-weight: bold">
+        We expect to be back online <span id="expectedCompletion">in a few hours</span>.
+      </p>
+      </p>
+      {% if support_email is defined %}
+        Please feel free to email us at <a href="mailto:{{ support_email }}">{{ support_email }}</a>.
+      {% endif %}.
+      </p>
+    </div>
+  </body>
+</html>

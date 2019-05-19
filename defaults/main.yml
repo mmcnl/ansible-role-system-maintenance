@@ -1,0 +1,10 @@
+---
+maintenance_site_name: The site
+maintenance_min: 15
+maintenance_rounding_min: 15
+maintenance_html_path: /etc/nginx/global/system_maintenance.html
+maintenance_nginx_conf: /etc/nginx/global/system_maintenance.conf
+maintenance_page: system_maintenance.html
+
+enable_maintenance_mode: false
+disable_maintenance_mode: false
