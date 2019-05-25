@@ -1,0 +1,15 @@
+---
+dependencies:
+  - role: mmcnl.nginx_handlers
+
+galaxy_info:
+  role_name: system_maintenance
+  author: mmcnl
+  description: "use nginx to show or hide a maintenance page"
+  license: MIT
+  min_ansible_version: 2.4
+  platforms:
+    - name: Ubuntu
+      versions:
+        - bionic
+  galaxy_tags: []
