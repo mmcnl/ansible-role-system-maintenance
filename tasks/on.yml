@@ -16,7 +16,7 @@
 
 - name: get rounded estimated end time of maintenance
   shell: |
-    est_time=`date -d'+{{ maintenance_rounding_min|int + maintenance_min|int }} minutes' '+%s'`
+    est_time=`date -d'+{{ rounding_min|int + maintenance_min|int }} minutes' '+%s'`
     rounded=$(($est_time - ($est_time % {{ rounding_min|int * 60 }}) ))
     TZ={{ maintenance_time_zone }} date -d"@$rounded" '+%b %d at %l:%M%P %Z'
   register: maintenance_end_time
