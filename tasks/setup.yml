@@ -1,6 +1,0 @@
----
-- name: copy shared config
-  template:
-    src: system_maintenance.conf.j2
-    dest: /etc/nginx/global/system_maintenance.conf
-  notify: restart nginx

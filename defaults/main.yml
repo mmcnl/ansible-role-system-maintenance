@@ -1,6 +1,7 @@
 ---
+maintenance_mode:
 maintenance_site_name: The site
 maintenance_min: 15
-maintenance_rounding_min: 15
 maintenance_page: system_maintenance.html
 maintenance_time_zone: America/Los_Angeles
+maintenance_services_to_pause: []

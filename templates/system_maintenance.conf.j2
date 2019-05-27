@@ -1,8 +1,0 @@
-# -*- mode: nginx -*-
-# {{ ansible_managed }}
-
-error_page 503 @maintenance;
-location @maintenance {
-    rewrite ^(.*)$ /system_maintenance.html break;
-    internal;
-}

@@ -1,9 +1,10 @@
 ---
-- name: temporarily stop monitoring services
+- name: temporarily stop services
   systemd:
-    name: monit
+    name: "{{ item }}"
     enabled: yes
     state: stopped
+  with_items: "{{ maintenance_services_to_pause }}"
 
 - name: set rounding based on estimated time
   set_fact:
@@ -28,10 +29,16 @@
   notify: restart nginx
 
 - name: update conf file to turn maintenance mode on
-  lineinfile:
+  blockinfile:
     path: "{{ maintenance_nginx_conf }}"
-    line: "return 503;"
-    insertafter: system_maintenance.conf
+    insertafter: "SYSTEM_MAINTENANCE_PLACEHOLDER"
+    block: |
+      error_page 503 @maintenance;
+      location @maintenance {
+          root {{ maintenance_html_dir }};
+          rewrite ^(.*)$ /system_maintenance.html break;
+          internal;
+      }
+      return 503;
     state: present
-    mode: 0644
   notify: restart nginx

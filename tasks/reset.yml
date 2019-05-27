@@ -1,0 +1,4 @@
+---
+# https://github.com/systemd/systemd/issues/10529#issuecomment-433319399
+- name: reset systemd failure counts
+  command: systemctl reset-failed nginx
