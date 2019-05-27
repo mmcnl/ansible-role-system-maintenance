@@ -2,14 +2,10 @@
 - name: update conf file to turn maintenance mode off
   lineinfile:
     path: "{{ maintenance_nginx_conf }}"
-    line: return 503;
+    line: "return 503;"
     state: absent
     mode: 0644
   notify: restart nginx
-
-# https://github.com/systemd/systemd/issues/10529#issuecomment-433319399
-- name: reset systemd failure counts
-  command: systemctl reset-failed
 
 - name: start monit
   systemd:

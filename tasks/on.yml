@@ -5,28 +5,33 @@
     enabled: yes
     state: stopped
 
-- name: get current time in RFC2616 format
+- name: set rounding based on estimated time
+  set_fact:
+    rounding_min: |
+      {% if maintenance_min|int <= 15 %}5
+      {% elif maintenance_min|int <= 60 %}15
+      {% elif maintenance_min|int <= 180 %}30
+      {% else %}60{% endif %}
+
+- name: get rounded estimated end time of maintenance
   shell: |
-    curdate=`date -d'+{{ (maintenance_rounding_min|int + maintenance_min|int) }} minutes' '+%s'`
-    rounded=$(echo "$curdate - ($curdate % ({{ maintenance_rounding_min }} * 60))" | bc)
-    TZ=America/New_York date -d"@$rounded" '+%b %d at %l:%M%P %Z'
+    est_time=`date -d'+{{ maintenance_rounding_min|int + maintenance_min|int }} minutes' '+%s'`
+    rounded=$(($est_time - ($est_time % {{ rounding_min|int * 60 }}) ))
+    TZ={{ maintenance_time_zone }} date -d"@$rounded" '+%b %d at %l:%M%P %Z'
   register: maintenance_end_time
+  changed_when: false
 
-- replace:
-    path: "{{ maintenance_html_path }}"
-    regexp: '(.*expectedCompletion.>).*?(<.*)?$'
-    replace: '\1by {{ maintenance_end_time.stdout }}\2'
-
-# https://github.com/systemd/systemd/issues/10529#issuecomment-433319399
-- name: reset systemd failure counts
-  command: systemctl reset-failed
+- name: generate maintenance page
+  template:
+    src: "{{ maintenance_custom_page if maintenance_custom_page is defined else 'system_maintenance.html.j2' }}"
+    dest: "{{ maintenance_html_dir }}/{{ maintenance_page }}"
+  notify: restart nginx
 
 - name: update conf file to turn maintenance mode on
   lineinfile:
     path: "{{ maintenance_nginx_conf }}"
-    line: return 503;
-    insertbefore: error_page
+    line: "return 503;"
+    insertafter: system_maintenance.conf
     state: present
     mode: 0644
   notify: restart nginx
-

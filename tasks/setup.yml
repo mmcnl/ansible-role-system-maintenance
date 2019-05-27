@@ -1,9 +1,6 @@
 ---
-- name: copy shared config files
+- name: copy shared config
   template:
-    src: "{{ item }}.j2"
-    dest: "/etc/nginx/global/{{ item | basename }}"
-  with_items:
-    - system_maintenance.conf
-    - "{{ maintenance_page }}"
+    src: system_maintenance.conf.j2
+    dest: /etc/nginx/global/system_maintenance.conf
   notify: restart nginx

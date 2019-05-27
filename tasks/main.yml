@@ -1,9 +1,14 @@
 ---
 - import_tasks: setup.yml
-  when: not enable_maintenance_mode|bool and not disable_maintenance_mode|bool
+  when: maintenance_mode == 'setup'
+
+# https://github.com/systemd/systemd/issues/10529#issuecomment-433319399
+- name: reset systemd failure counts
+  command: systemctl reset-failed nginx
+  when: maintenance_mode == 'on' or maintenance_mode == 'off'
 
 - import_tasks: on.yml
-  when: enable_maintenance_mode|bool
+  when: maintenance_mode == 'on'
 
 - import_tasks: off.yml
-  when: disable_maintenance_mode|bool
+  when: maintenance_mode == 'off'
