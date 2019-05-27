@@ -18,11 +18,11 @@
       <p style="font-size: 120%; font-weight: bold">
         We expect to be back online by {{ maintenance_end_time.stdout }}.
       </p>
-      {% if maintenance_support_email is defined %-}
+      {% if maintenance_support_email is defined -%}
         <p>
           Please feel free to email us at <a href="mailto:{{ maintenance_support_email }}">{{ maintenance_support_email }}</a>.
         </p>
-      {% endif %-}
+      {% endif -%}
     </div>
   </body>
 </html>
