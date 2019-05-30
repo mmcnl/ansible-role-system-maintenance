@@ -1,7 +1,4 @@
 ---
-- import_tasks: reset.yml
-  when: maintenance_mode == 'on' or maintenance_mode == 'off'
-
 - import_tasks: on.yml
   when: maintenance_mode == 'on'
 
