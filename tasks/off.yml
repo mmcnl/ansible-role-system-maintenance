@@ -1,10 +1,16 @@
 ---
+- name: check if conf file exists
+  stat:
+    path: "{{ maintenance_nginx_conf }}"
+  register: check_nginx_conf
+
 - name: update conf file to turn maintenance mode off
   blockinfile:
     path: "{{ maintenance_nginx_conf }}"
     insertafter: "SYSTEM_MAINTENANCE_PLACEHOLDER"
     state: absent
   notify: restart nginx
+  when: check_nginx_conf.stat.exists
 
 - name: remove maintenance page
   file:
@@ -17,4 +23,4 @@
     name: "{{ item }}"
     enabled: yes
     state: started
-  with_items: "{{ maintenance_services_to_pause | reverse | list }}"
+  with_items: "{{ maintenance_services_to_pause | reverse | list}}"

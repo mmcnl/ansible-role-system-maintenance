@@ -18,15 +18,25 @@
   shell: |
     est_time=`date -d'+{{ rounding_min|int + maintenance_min|int }} minutes' '+%s'`
     rounded=$(($est_time - ($est_time % {{ rounding_min|int * 60 }}) ))
-    TZ={{ maintenance_time_zone }} date -d"@$rounded" '+%b %d at %l:%M%P %Z'
+    TZ={{ maintenance_time_zone }} date -d"@$rounded" '+%B %-d at %-l:%M%P %Z'
   register: maintenance_end_time
   changed_when: false
+
+- name: ensure html directory exists
+  file:
+    path: "{{ maintenance_html_dir }}"
+    state: directory
 
 - name: generate maintenance page
   template:
     src: "{{ maintenance_custom_page if maintenance_custom_page is defined else 'system_maintenance.html.j2' }}"
     dest: "{{ maintenance_html_dir }}/{{ maintenance_page }}"
   notify: restart nginx
+
+- name: check if conf file exists
+  stat:
+    path: "{{ maintenance_nginx_conf }}"
+  register: check_nginx_conf
 
 - name: update conf file to turn maintenance mode on
   blockinfile:
@@ -42,3 +52,4 @@
       return 503;
     state: present
   notify: restart nginx
+  when: check_nginx_conf.stat.exists
