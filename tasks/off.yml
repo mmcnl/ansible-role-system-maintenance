@@ -23,4 +23,4 @@
     name: "{{ item }}"
     enabled: yes
     state: started
-  with_items: "{{ maintenance_services_to_pause | reverse | list}}"
+  with_items: "{{ maintenance_services_to_pause | reverse | list }}"
